@@ -13,6 +13,21 @@
   padding-bottom: 5px;
 }
 
+#content-body p {
+  padding: unset;
+  margin: unset;
+}
+
+#content-image {
+  display: none;
+}
+
+#content-image.visible {
+  display: unset;
+  max-width: 480px;
+  padding: 0 10px;
+}
+
 #content-link {
   text-decoration: unset;
   font-weight: bold;
