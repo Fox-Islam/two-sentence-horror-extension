@@ -1,3 +1,30 @@
+if (!hasAccessToChromeStorage()) {
+	var localStorageEmulation = {
+		timeframe: 'hour'
+	}
+	var chrome = {
+		storage: {
+			sync: {
+				get: function (storageArray, callback) {
+					var result = {};
+					storageArray.forEach(storedKey => {
+						result[storedKey] = localStorageEmulation[storedKey]
+					});
+					callback(result);
+				},
+				set: function (storageObject, callback) {
+					localStorageEmulation = storageObject;
+					callback();
+				}
+			}
+		}
+	}
+}
+
+function hasAccessToChromeStorage() {
+	return chrome && chrome.storage && chrome.storage.sync;
+}
+
 chrome.storage.sync.get(['timeframe'], function (result) {
 	let timeframe = result.timeframe;
 	var contentTitleElement = document.getElementById('content-title');
