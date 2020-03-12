@@ -1,0 +1,18 @@
+{
+"manifest_version": 2,
+    "name": "Two Sentence Horror",
+    "description": "Gets two sentence horrors from reddit",
+    "version": "1.0",
+	"permissions": ["storage"],
+	"browser_action": {
+      "default_popup": "twosentencehorror.html"
+    },
+	"background": {
+      "scripts": ["background.js"],
+      "persistent": false
+    },
+	"icons": {
+		"256": "twosentencehorror.png"
+	},
+	"content_security_policy":"script-src 'self' https://apis.google.com; object-src 'self'"
+}
