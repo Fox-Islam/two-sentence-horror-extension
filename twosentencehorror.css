@@ -2,6 +2,38 @@
   font-size: 18px;
   padding: 10px;
   width: 500px;
+  max-width: 500px;
+  min-height: 100px;
+}
+
+#loader {
+  display: none;
+}
+
+#loader.visible {
+  display: unset;
+  position: absolute;
+  left: 230px;
+  top: 25px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #696c6f;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: loading-animation 1100ms linear infinite;
+}
+
+@keyframes loading-animation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#content-container {
+  display: none;
+}
+
+#content-container.visible {
+  display: unset;
 }
 
 #content-title {
