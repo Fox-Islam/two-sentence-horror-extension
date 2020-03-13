@@ -27,6 +27,8 @@ function hasAccessToChromeStorage() {
 
 chrome.storage.sync.get(['timeframe'], function (result) {
 	var timeframe = result.timeframe;
+	var loaderElement = document.getElementById('loader');
+	var contentContainerElement = document.getElementById('content-container');
 	var contentTitleElement = document.getElementById('content-title');
 	var contentBodyElement = document.getElementById('content-body');
 	var contentImageElement = document.getElementById('content-image');
@@ -44,6 +46,7 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 		xhr.onload = function() {
 			let jsonResponse = JSON.parse(xhr.responseText);
 			let contentData = getContentData(jsonResponse);
+			stopLoading();
 			setContent(contentData);
 		};
 
@@ -53,9 +56,11 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 				selftext: 'An error has occured',
 				url: ''
 			};
+			stopLoading();
 			setContent(contentData);
 		};
 
+		startLoading();
 		xhr.send();
 	}
 
@@ -67,6 +72,16 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 			xhr = null;
 		}
 		return xhr;
+	}
+
+	function startLoading() {
+		loaderElement.classList = ['visible'];
+		contentContainerElement.classList = [];
+	}
+
+	function stopLoading() {
+		contentContainerElement.classList = ['visible'];
+		loaderElement.classList = [];
 	}
 
 	function getContentData(jsonResponse) {
