@@ -12,6 +12,7 @@
       "persistent": false
     },
 	"icons": {
+    "128": "icon.png",
 		"256": "twosentencehorror.png"
 	},
 	"content_security_policy":"script-src 'self' https://apis.google.com; object-src 'self'"
