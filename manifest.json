@@ -2,7 +2,7 @@
 "manifest_version": 2,
     "name": "Two Sentence Horror",
     "description": "Gets two sentence horrors from reddit",
-    "version": "1.0.1",
+    "version": "1.0.2",
 	"permissions": ["storage"],
 	"browser_action": {
       "default_popup": "twosentencehorror.html"
