@@ -31,6 +31,7 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 	var contentContainerElement = document.getElementById('content-container');
 	var contentTitleElement = document.getElementById('content-title');
 	var contentBodyElement = document.getElementById('content-body');
+	var contentVideoElement = document.getElementById('content-video');
 	var contentImageElement = document.getElementById('content-image');
 	var contentLinkElement = document.getElementById('content-link');
 	var contentRefreshButtonElement = document.getElementById('refresh-button');
@@ -66,7 +67,7 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 
 	function createRequest(method, url) {
 		var xhr = new XMLHttpRequest();
-		if ("withCredentials" in xhr) {
+		if ('withCredentials' in xhr) {
 			xhr.open(method, url, true);
 		} else {
 			xhr = null;
@@ -98,6 +99,7 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 	function setContent(contentData) {
 		setTitle(contentData);
 		setBody(contentData);
+		setVideo(contentData);
 		setImage(contentData);
 		setPermalink(contentData);
 	}
@@ -107,6 +109,14 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 	}
 
 	function setBody(contentData) {
+		if (isSupportedVideoType(contentData)) {
+			contentBodyElement.innerHTML = '';
+			return;
+		}
+		if (contentData.media_embed && contentData.media_embed.content) {
+			contentBodyElement.innerHTML = contentData.media_embed.content;
+			return;
+		}
 		if (!contentData.selftext_html) {
 			contentBodyElement.innerText = contentData.selftext;
 			return;
@@ -114,13 +124,58 @@ chrome.storage.sync.get(['timeframe'], function (result) {
 		contentBodyElement.innerHTML = contentData.selftext_html;
 	}
 
+	function isSupportedVideoType(contentData) {
+		return isGifv(contentData) || isHostedVideo(contentData) || isGfycatVideo(contentData);
+	}
+
+	function isGifv(contentData) {
+		return contentData.url && contentData.url.endsWith('.gifv')
+	}
+
+	function isHostedVideo(contentData) {
+		return contentData.post_hint === 'hosted:video' && contentData.media && contentData.media.reddit_video
+	}
+
+	function isGfycatVideo(contentData) {
+		return contentData.post_hint === 'rich:video' && contentData.media.type === 'gfycat.com' && contentData.media.oembed && contentData.media.oembed.thumbnail_url;
+	}
+
+	function setVideo(contentData) {
+		if (isSupportedVideoType(contentData)) {
+			var source = document.createElement('source');
+			source.src = getVideoSource(contentData);
+			source.type = 'video/mp4';
+			contentVideoElement.appendChild(source);
+			contentVideoElement.load();
+			contentImageElement.classList = ['visible'];
+			contentVideoElement.play();
+			return;
+		}
+		contentVideoElement.pause();
+		contentImageElement.classList = [];
+		contentVideoElement.innerHTML = '';
+	}
+
+	function getVideoSource(contentData) {
+		if (isGifv(contentData)) {
+			return contentData.url.replace('.gifv', '.mp4');
+		}
+		if (isHostedVideo(contentData)) {
+			return contentData.media.reddit_video.fallback_url;
+		}
+		if (isGfycatVideo(contentData)) {
+			return contentData.media.oembed.thumbnail_url.replace('https://thumbs', 'https://giant').replace('-size_restricted.gif', '.mp4');
+		}
+		return '';
+	}
+
 	function setImage(contentData) {
 		if (contentData.post_hint === 'image') {
 			contentImageElement.src = contentData.url;
-			contentImageElement.classList = ["visible"];
+			contentImageElement.classList = ['visible'];
 			return;
 		}
-		contentImageElement.src = "";
+		contentImageElement.src = '';
 		contentImageElement.classList = [];
 	}
 
